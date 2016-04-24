@@ -1,5 +1,15 @@
 '''
-##martingale.py 5.0
+## martingale.py 5.1
+__UPDATE5.1__
+plotできるようにした
+資産曲線と収益曲線を描こうと思ったけど、
+重要なのは最終利益なんで
+最後の結果として、
+1000回プレイした後のそれぞれの最終資産を棒グラフで示した
+初期資産を10回、100回、100回と増やしていくと勝率が50%に近づいて確実に負けないようになるが、
+資産はそれほど増えない
+課題は確実性を見極めること、資産増加率を見極めること
+
 __UPDATE5.0__
 関数の整理  
 初期資産10で動くようにした  
@@ -34,9 +44,13 @@ __ACTION__
 
 __PLAN__
 初期資産を変えて最も効率の良い「初期資産/掛け金の割合」を見つける
+
+* 勝率を50%に十分近づける
+* 負け(=初期試算を下回る)を少なくする
+* 資産増加率を見極める
+
 pyplot使って可視化
 yield使ったほうがよいんではないかい？
-
 '''
 # from scipy import stats
 # from scipy import optimize
@@ -93,57 +107,52 @@ def play(asset):
 	return (asset,win/gnum)
 
 
-# from pandas import *
+from pandas import *
+import matplotlib.pyplot as plt
 # def plotter(assetDefault,profitList,assetList):
-# 	import matplotlib.pyplot as plt
 # 	'''収益曲線(profitList)と資産曲線(assetList)を描画する'''
 # 	xaxis=range(len(profitList))
 # 	lbl='Default Asset '+str(assetDefault)
 
-# 	plt.plot(xaxis,profitList,'-',label=lbl)
-
 # 	fig, ax1 = plt.subplots()
-# 	ax1.plot(xaxis,assetList,'-',label=lbl)
+# 	ax1.plot(xaxis,assetList,'-r',label='Asset')
 # 	ax2 = ax1.twinx()
-# 	ax2.plot(xaxis,profitList,label=lbl)
-
-# 	plt.plot(xaxis,assetList,'-',label=lbl)
-# 	ax2 = ax1.twinx()
-# 	ax2.plot(xaxis,profitList,label=lbl)
-
+# 	ax2.plot(xaxis,profitList,'-b',label='Profit')
 
 # 	'''__PLOT SETTING__________________________'''
 # 	plt.legend(loc='best',fancybox=True,fontsize='small')
 # 	plt.xlabel('Game streak')
-# 	plt.ylabel('Asset')
+# 	ax1.set_ylabel('Asset')
+# 	ax2.set_ylabel('Profit')
 # 	plt.grid(True)
 # 	plt.show()
 
 
+def assetPlotter(assetDefault,assetList,winRateAve):
+	'''プレイした回数分だけの資産曲線(assetList)を描画する'''
+	xaxis=range(len(assetList))
+	lbl='Default Asset '+str(assetDefault)+'\nWin rate'+str(winRateAve)
+
+	plt.bar(xaxis,assetList,label=lbl)
+
+	'''__PLOT SETTING__________________________'''
+	plt.legend(loc='best',fancybox=True,fontsize='small')
+	plt.xlabel('Take')
+	plt.ylabel('Asset')
+	plt.grid(True)
+	plt.show()
 
 
 
 
-# def www(low,high,term):
-	# for asset in range(low,high,term):
-	# '''初期資産をlow~highまでtermずつ増やしていく'''
-	# '''__RESET VALUES__________________________'''
-	# '''各値をリセットする'''
-	# assetDefault=asset
-	# bet,gnum,win=1,0,0
-	# gnumList,assetList,profitList=[],[],[]
-	# profit_tryList,winrate_tryList=[],[]
-	# for i in range(0,100):
-	# 	play()
-	# # return asset
-	# return 
 
 
 
-# __MAIN__________________________
-'''統計的に見たいから、何度も初期資産から初めて勝率見極める'''
-'''__SET DEFAULT ARGUMENTS__________________________'''
-defaultAsset=10
+'''__MAIN__________________________
+統計的に見たいから、何度も初期資産から初めて勝率見極める
+__SET DEFAULT ARGUMENTS__________________________'''
+defaultAsset=100
+trial=1000    #何回試行するか(十分多く計算しないと確実性のない計算となる)
 # low,high,term=10,110,10
 # for defaultAsset in range(low,high,term):
 # profit_tryList,winrate_tryList=[],[]
@@ -151,14 +160,15 @@ finalAssset,winRate=[],[]
 
 
 print('__Game start! Your default asset is',defaultAsset,'____________')
-for i in range(1,101):    #100回プレイ
+for i in range(1,trial+1):    #1000回プレイ
 	print('\nTake:',i)
-	x=play(defaultAsset)
-	finalAssset.append(x[0])
-	winRate.append(x[1])
+	p=play(defaultAsset)
+	finalAssset.append(p[0])
+	winRate.append(p[1])
 import numpy as np
-print('Final Asset:', finalAssset, 'Win ratio:', np.mean(winRate))
-
+winRateAve=np.mean(winRate)
+print('Final Asset:', finalAssset, 'Win ratio:', winRateAve)
+assetPlotter(defaultAsset,finalAssset,winRateAve)
 
 		# profit_tryList.append(asset-assetDefault)   #最終的な利益をprofit_tryListに追加する
 		# winrate_tryList.append(win/gnum)   #勝率をwinrate_tryListに追加する
