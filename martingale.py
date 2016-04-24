@@ -1,9 +1,27 @@
 '''
-***未完成***
-martingale.py 4.1
-<INTRODUCTION>
-投資法「マーチンゲール」実践
-1/2の確率で勝負するゲーム(たとえば表裏当てコインゲーム)
+##martingale.py 5.0
+__UPDATE5.0__
+関数の整理  
+初期資産10で動くようにした  
+
+標準出力に以下を出力する  
+* 100回分のゲーム結果
+* 最終資産のリスト(100要素)
+* 勝率(ゲーム数=100回平均)
+
+
+__UPDATE4.1__
+関数に分割
+# 同じ初期資産を100回計算させて、収益のリストprofitListを得る
+
+__INTRODUCTION__
+投資法「マーチンゲール」
+1/2の確率で勝負するゲーム(たとえば表裏当てコインゲーム)のシミューレーション
+
+__USAGE__
+Just build.
+
+__ACTION__
 基本掛け金1
 資産から掛け金を引く
 買ったら
@@ -12,24 +30,25 @@ martingale.py 4.1
 負けたら
 	掛け金は戻らない
 	次の掛け金を倍にする
-資産がなくなるか、ゲーム回数が100超えたら終了
-<USAGE>
-Just build.
-<UPDATE4.1>
-関数に分割
-# 同じ初期資産を100回計算させて、収益のリストprofitListを得る
+資産がなくなるか、ゲーム回数が*n*回超えたら終了
+
+__PLAN__
+初期資産を変えて最も効率の良い「初期資産/掛け金の割合」を見つける
+pyplot使って可視化
+yield使ったほうがよいんではないかい？
+
 '''
-import numpy as np
 # from scipy import stats
 # from scipy import optimize
-import matplotlib.pyplot as plt
-from pandas import *
-import random
+
+
+
 def game(x):
 	'''
 	勝ったら掛け金を1に戻す
 	負けたら倍額の掛け金を戻す
 	'''
+	import random
 	if random.random()>0.5:
 		# print('Win! I got', 2*x, 'and I\'ll bet 1 next time.' )
 		return 1
@@ -38,32 +57,70 @@ def game(x):
 		x+=x
 		return x
 
-def play(asset,bet,gnum,win):
-	assetDefault=asset
-	profitList=[]
+
+
+
+def play(asset):
+	'''初期試算を超えるか、ゲーム回数が100超えるまでプレイ
+	勝ちゲーム数、継続ゲーム数、勝率(勝ちゲーム数/継続ゲーム数=0.5に近くなるはず)をprint
+	戻り値
+		asset:最終資産
+		win/gnum:勝率
+		profitList:収益曲線
+		assetList:資産曲線
+	最終資産と勝率を返す'''
+	gnum,win,bet=0,0,1
+	profitList,assetList=[],[]
+	defaultAsset=asset
 	while asset>bet:
-		# print('\n____________________________')
-
 		gnum+=1
-		# gnumList.append(gnum)
-		# print('Game times:',gnum)
-
 		asset-=bet
-		# print('Bet:',bet)
-
-		result=game(bet)
-		if result==1:
+		'''__ゲーム結果の集計__________________________'''
+		result=game(bet)    #結果
+		if result==1:    #勝利なら1に戻っているはず
 			win+=1
 			asset+=2*bet
-		bet=result
-		# assetList.append(asset)
-		profitList.append(asset-assetDefault)   #収益曲線
-		# print('Asset:', asset)
+		bet=result    #次回の掛け金
+		'''__資産と収益の記録__________________________'''
+		assetList.append(asset)
+		profitList.append(result)   #収益曲線
 		if gnum>100 : break
 	print('Win game:',win)
-	print('Continue Game:',gnum)
-	print('Profit curve',profitList)
+	print('Game streak:',gnum)
+	# print('Win ratio:', win/gnum)
+	# print('Profit curve',profitList)
+	# plotter(defaultAsset,profitList,assetList)
 	return (asset,win/gnum)
+
+
+# from pandas import *
+# def plotter(assetDefault,profitList,assetList):
+# 	import matplotlib.pyplot as plt
+# 	'''収益曲線(profitList)と資産曲線(assetList)を描画する'''
+# 	xaxis=range(len(profitList))
+# 	lbl='Default Asset '+str(assetDefault)
+
+# 	plt.plot(xaxis,profitList,'-',label=lbl)
+
+# 	fig, ax1 = plt.subplots()
+# 	ax1.plot(xaxis,assetList,'-',label=lbl)
+# 	ax2 = ax1.twinx()
+# 	ax2.plot(xaxis,profitList,label=lbl)
+
+# 	plt.plot(xaxis,assetList,'-',label=lbl)
+# 	ax2 = ax1.twinx()
+# 	ax2.plot(xaxis,profitList,label=lbl)
+
+
+# 	'''__PLOT SETTING__________________________'''
+# 	plt.legend(loc='best',fancybox=True,fontsize='small')
+# 	plt.xlabel('Game streak')
+# 	plt.ylabel('Asset')
+# 	plt.grid(True)
+# 	plt.show()
+
+
+
 
 
 
@@ -82,27 +139,25 @@ def play(asset,bet,gnum,win):
 	# return 
 
 
-def manytimes_try(asset):
-	'''初期資産をlow~highまでtermずつ増やしていく'''
-	# __RESET VALUES__________________________
-	# bet,gnum,win=1,0,0
-	profit_tryList,winrate_tryList=[],[]
-	# for i in range(0,100):
-	pl=[]
-	for i in range(0,100):
-		print('\nGame time:',i)
-		pl.append(play(asset,bet=1,gnum=0,win=0))
-	print(pl)
-	# print(asset,'asset:',pl[0],'bet:',pl[1],'gnum:',pl[2],'times','win:',pl[3],'%')
 
 # __MAIN__________________________
+'''統計的に見たいから、何度も初期資産から初めて勝率見極める'''
+'''__SET DEFAULT ARGUMENTS__________________________'''
+defaultAsset=10
 # low,high,term=10,110,10
-# for asset in range(low,high,term):
-asset=10
-print('____________',asset,'____________')
-manytimes_try(asset)
+# for defaultAsset in range(low,high,term):
+# profit_tryList,winrate_tryList=[],[]
+finalAssset,winRate=[],[]
 
-	# return asset
+
+print('__Game start! Your default asset is',defaultAsset,'____________')
+for i in range(1,101):    #100回プレイ
+	print('\nTake:',i)
+	x=play(defaultAsset)
+	finalAssset.append(x[0])
+	winRate.append(x[1])
+import numpy as np
+print('Final Asset:', finalAssset, 'Win ratio:', np.mean(winRate))
 
 
 		# profit_tryList.append(asset-assetDefault)   #最終的な利益をprofit_tryListに追加する
@@ -110,37 +165,18 @@ manytimes_try(asset)
 
 
 
-	# '''__RESULT__________________________'''
-	# print('\n____________________________')
-	# print('Default asset:',assetDefault)
-	# # print('Game times:', gnum)
-	# print('Win rate List:', winrate_tryList)
-	# print('Profit List:', profit_tryList)
-	# winrateAve=np.mean(winrate_tryList)
-	# profitAve=np.mean(profit_tryList)
-	# print('Win rate:', winrateAve)
-	# print('Profit:', profitAve)
-	# print(gnumList,assetList)
-
-	# plt.plot(gnumList,profitList,'-',label=assetDefault)
-
-
-		# plotplot(gnumList,assetList,'-',label=assetDefault)
-		# ax2 = ax1.twinx()
-		# ax2.plot(gnumList,profitList,label=assetDefault)
-
-		# fig, ax1 = plt.subplots()
-		# ax1.plot(gnumList,assetList,'-',label=assetDefault)
-		# ax2 = ax1.twinx()
-		# ax2.plot(gnumList,profitList,label=assetDefault)
-
-# '''__PLOT SETTING__________________________'''
-# plt.legend(loc='best',fancybox=True,fontsize='small')
-# plt.xlabel('Game times')
-# plt.ylabel('Asset')
-# plt.grid(True)
-# plt.show()
-
+'''__RESULT__________________________'''
+# print('\n____________________________')
+# print('Default asset:',assetDefault)
+# # print('Game times:', gnum)
+# print('Win rate List:', winrate_tryList)
+# print('Profit List:', profit_tryList)
+# import numpy as np
+# winrateAve=np.mean(winrate_tryList)
+# profitAve=np.mean(profit_tryList)
+# print('Win rate:', winrateAve)
+# print('Profit:', profitAve)
+# print(gnumList,assetList)
 
 
 

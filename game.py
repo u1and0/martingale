@@ -1,5 +1,8 @@
 '''
-## game.py ver1.0
+## game.py ver1.1
+__UPDATE1.1__
+逐一assetとgameの結果を比較して、assetを超えたらループ終了  
+
 __UPDATE1.0__
 first commit
 
@@ -25,7 +28,6 @@ __PLAN__
 gameの結果を資産(asset)に追加したり差し引いたり
 グラフにプロット
 '''
-asset=1000
 
 def game(bet,gametime):
 	'''半分の確率で勝敗決め、報酬(profit)として勝ったら掛け金(bet),負けたら0を返す'''
@@ -44,13 +46,18 @@ def game(bet,gametime):
 # print('Max drowdown is',max(result))
 
 
-
 '''
+__MAIN__________________________
 逐一assetとgameの結果を比較して、assetを超えたらループ終了
 '''
+defaultAsset=100
+bet=1
+breakPlaytime=1000    #連続1000回までプレイ
 k=[]
-for i in game(1,100):
-	k.append(i)
-	if i>asset:
+asset=defaultAsset-bet
+for profit in game(bet,breakPlaytime):
+	asset+=profit
+	k.append(profit)
+	if profit>asset:
 		break
 print(k)
