@@ -1,5 +1,14 @@
 '''
-## martingale.py 5.1
+## martingale.py 5.2
+
+__UPDATE5.2__
+
+* 関数playのbreak条件
+	* "100回プレイしたら"==>"資産が初期資産の10倍になったら"に変更
+	* 何倍で脱出するのがいいんですかね
+	* ある程度溜まったら口座からひきおろしたいから、その条件を次のバージョンに付け加えよう。
+* 最終的な資産ではなく、資産がいくら増えたか(減ったか)をリスト内包表記で記述し、プロットする
+
 __UPDATE5.1__
 plotできるようにした  
 資産曲線と収益曲線を描こうと思ったけど、  
@@ -9,15 +18,6 @@ plotできるようにした
 初期資産を10回、100回、100回と増やしていくと勝率が50%に近づいて確実に負けないようになるが、  
 資産はそれほど増えない  
 課題は確実性を見極めること、資産増加率を見極めること  
-
-
-
-![試行回数10回](https://raw.github.com/wiki/u1and0/martingale/pic/trial10.png)
-![試行回数100回](https://raw.github.com/wiki/u1and0/martingale/pic/trial100.png)
-![試行回数1000回](https://raw.github.com/wiki/u1and0/martingale/pic/trial1000.png)
-
-
-
 
 __UPDATE5.0__
 関数の整理  
@@ -31,7 +31,7 @@ __UPDATE5.0__
 
 __UPDATE4.1__
 関数に分割
-# 同じ初期資産を100回計算させて、収益のリストprofitListを得る
+同じ初期資産を100回計算させて、収益のリストprofitListを得る
 
 __INTRODUCTION__
 投資法「マーチンゲール」
@@ -57,6 +57,8 @@ __PLAN__
 * 勝率を50%に十分近づける
 * 負け(=初期試算を下回る)を少なくする
 * 資産増加率を見極める
+* 資産が*n*倍になったらassetから引く
+* 引いた数をカウントする
 
 pyplot使って可視化
 yield使ったほうがよいんではないかい？
@@ -107,12 +109,9 @@ def play(asset):
 		'''__資産と収益の記録__________________________'''
 		assetList.append(asset)
 		profitList.append(result)   #収益曲線
-		if gnum>100 : break
+		if 10*defaultAsset<asset : break    #初期資産の10倍になったら終了
 	print('Win game:',win)
 	print('Game streak:',gnum)
-	# print('Win ratio:', win/gnum)
-	# print('Profit curve',profitList)
-	# plotter(defaultAsset,profitList,assetList)
 	return (asset,win/gnum)
 
 
@@ -138,10 +137,9 @@ import matplotlib.pyplot as plt
 
 
 def assetPlotter(assetDefault,assetList,winRateAve):
-	'''プレイした回数分だけの資産曲線(assetList)を描画する'''
+	'''最終資産(assetList)を棒グラフとして描画する'''
 	xaxis=range(len(assetList))
 	lbl='Default Asset '+str(assetDefault)+'\nWin rate'+str(winRateAve)
-
 	plt.bar(xaxis,assetList,label=lbl)
 
 	'''__PLOT SETTING__________________________'''
@@ -158,10 +156,9 @@ def assetPlotter(assetDefault,assetList,winRateAve):
 
 
 '''__MAIN__________________________
-統計的に見たいから、何度も初期資産から初めて勝率見極める
-__SET DEFAULT ARGUMENTS__________________________'''
-defaultAsset=100
-trial=100    #何回試行するか(十分多く計算しないと確実性のない計算となる)
+統計的に見たいから、何度も初期資産から初めて勝率見極める'''
+defaultAsset=10
+trial=1000    #何回試行するか(十分多く計算しないと確実性のない計算となる)
 # low,high,term=10,110,10
 # for defaultAsset in range(low,high,term):
 # profit_tryList,winrate_tryList=[],[]
@@ -169,7 +166,7 @@ finalAssset,winRate=[],[]
 
 
 print('__Game start! Your default asset is',defaultAsset,'____________')
-for i in range(1,trial+1):    #1000回プレイ
+for i in range(1,trial+1):
 	print('\nTake:',i)
 	p=play(defaultAsset)
 	finalAssset.append(p[0])
@@ -177,7 +174,7 @@ for i in range(1,trial+1):    #1000回プレイ
 import numpy as np
 winRateAve=np.mean(winRate)
 print('Final Asset:', finalAssset, 'Win ratio:', winRateAve)
-assetPlotter(defaultAsset,finalAssset,winRateAve)
+assetPlotter(defaultAsset,[x-defaultAsset for x in finalAssset],winRateAve)
 
 		# profit_tryList.append(asset-assetDefault)   #最終的な利益をprofit_tryListに追加する
 		# winrate_tryList.append(win/gnum)   #勝率をwinrate_tryListに追加する
