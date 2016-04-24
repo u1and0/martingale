@@ -19,6 +19,11 @@ plotできるようにした
 資産はそれほど増えない  
 課題は確実性を見極めること、資産増加率を見極めること  
 
+![試行回数10回](https://raw.github.com/wiki/u1and0/martingale/pic/trial10.png)
+![試行回数100回](https://raw.github.com/wiki/u1and0/martingale/pic/trial100.png)
+![試行回数1000回](https://raw.github.com/wiki/u1and0/martingale/pic/trial1000.png)
+
+
 __UPDATE5.0__
 関数の整理  
 初期資産10で動くようにした  
