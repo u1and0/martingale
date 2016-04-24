@@ -26,20 +26,23 @@ gameの結果を資産(asset)に追加したり差し引いたり
 グラフにプロット
 '''
 asset=300
-bet=1
-gametime=10000
 
-import random
 def game(bet,gametime):
+	'''半分の確率で勝敗決め、報酬(profit)として勝ったら掛け金(bet),負けたら0を返す'''
 	profit=bet
 	for i in range(gametime):
+		import random
 		if random.random()>0.5:
 			profit=bet
 		else :
 			profit+=profit
 		yield profit
 
-result=list(game(bet,gametime))
-print('Game result\n',result)
-print('Win rate is',result.count(1)/gametime,'%')
-print('Max drowdown is',max(result))
+# result=list(game(bet,gametime))
+# print('Game result\n',result)
+# print('Win rate is',result.count(1)/gametime,'%')
+# print('Max drowdown is',max(result))
+print(game(1,100).__next__())
+
+# while asset>game(1,100) :
+# 	print('asset',asset)
