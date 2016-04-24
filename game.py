@@ -25,7 +25,7 @@ __PLAN__
 gameの結果を資産(asset)に追加したり差し引いたり
 グラフにプロット
 '''
-asset=300
+asset=1000
 
 def game(bet,gametime):
 	'''半分の確率で勝敗決め、報酬(profit)として勝ったら掛け金(bet),負けたら0を返す'''
@@ -42,7 +42,15 @@ def game(bet,gametime):
 # print('Game result\n',result)
 # print('Win rate is',result.count(1)/gametime,'%')
 # print('Max drowdown is',max(result))
-print(game(1,100).__next__())
 
-# while asset>game(1,100) :
-# 	print('asset',asset)
+
+
+'''
+逐一assetとgameの結果を比較して、assetを超えたらループ終了
+'''
+k=[]
+for i in game(1,100):
+	k.append(i)
+	if i>asset:
+		break
+print(k)
