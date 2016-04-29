@@ -1,5 +1,5 @@
 '''
-## martingale2 ver1.0
+## martingale3 ver1.0
 
 __UPDATE1.0__
 First commit
@@ -37,9 +37,6 @@ __PLAN__
 
 
 '''
-def winratio():
-	# 2-random.random()
-	return pay
 
 # def sufficient(bet,rate):
 # 	'''
@@ -61,7 +58,15 @@ asset=assetDefault
 while 1:
 	asset-=bet
 	import random
-	result=random.random()>0.5    #ゲームの結果(bool値)
+	import numpy as numpy
+	from game2 import *
+	ratio=float(soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3, length=1))    #相場観を見て勝ちそうな倍率を人間が決める
+	
+	unit=1
+	bet=unit*price
+	payout=unit*1000
+	profit=
+	result=game(ratio)    #ゲームの結果(bool値)
 	asset+=2*bet if result else 0    #勝ったら資金に掛け金の2倍を足す
 	bet*=1/bet if result else 2    #勝ったら掛け金1に戻す。負けたら掛け金2倍
 	import maxbet
