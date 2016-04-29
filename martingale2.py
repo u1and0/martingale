@@ -54,31 +54,18 @@ def winratio():
 
 # print(sufficient(1,0.5))
 
-import scipy.stats as stats
-import matplotlib.pyplot as plt
-import numpy as np
-def soubakan(low, high, mu, si, length):
-	'''正規分布に従う乱数を返す
-	low, high: 正規分布の最小値、最大値
-	mu, si: 正規分布の中央値、標準偏差
-	length: いくつの要素のリストを返すか'''
-	x=stats.truncnorm.rvs((low-mu)/si, (high-mu)/si,loc=mu, scale=si,size=length)
-	return x
-
-
-low,high=1.01,np.inf
-mu,si=1.4,0.3
-x=soubakan(low, high, mu, si,10000)
-print(min(x))
-'''
 ## __MAIN__________________________
 bet, assetDefault, i, profit,assetSafe=1,100,0,0,0
 # bet, asset, i, profit=1,10,0,0
 asset=assetDefault
+low,high=1.01,np.inf
+mu,si=1.4,0.3
 while 1:
 	asset-=bet
 	import random
-	result=random.random()>0.5    #ゲームの結果(bool値)
+	import game2
+	result=game2.game()    #ゲームの結果(bool値)
+	# result=random.random()>0.5    #ゲームの結果(bool値)
 	asset+=2*bet if result else 0    #勝ったら資金に掛け金の2倍を足す
 	bet*=1/bet if result else 2    #勝ったら掛け金1に戻す。負けたら掛け金2倍
 	import maxbet
@@ -90,4 +77,5 @@ while 1:
 	i+=1
 	print(i,'asset',asset,'bet',bet,'assetSafe',assetSafe)
 print('End of sequence...')
-'''
+
+
