@@ -6,12 +6,14 @@ First commit
 
 __USAGE__
 martingaleのメイン関数から呼び出す
-相場観パラメータの設定 
-	low,high=1.01,np.inf
-	mu,si=1.4,0.3
 
-	x=soubakan(low, high, mu, si,1)
-	game_test(float(x))
+```
+x=soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3)
+y=game(x)
+```
+
+yはブール値
+勝ったらTrue
 
 __INTRODUCTION__
 soubakan(相場観):
