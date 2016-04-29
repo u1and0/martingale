@@ -17,6 +17,10 @@ __ACTION__
 資産が掛け金を下回るまで繰り返す
 資産から掛け金を引く
 ゲームを行い結果をブール値で返す
+ゲームの支払額：購入口数×1000=購入口数×単価×勝率で表せる
+勝率＝
+~~購入口数は資金に依存するunit(asset)~~
+	資金いっぱいあるのに購入口数少ないとき==>資金の移動
 資産について：勝ったら掛け金の2倍を足し、負けたら0を足す(=何もしない)
 掛け金について：勝ったら掛け金を1に戻し、負けたら掛け金を2倍にする**   ざわざわ･･･倍プッシュだ･･･！**
 掛け金の評価：上で出された掛け金と、資金に基づく掛け金の最大値いずれか小さい方
@@ -24,9 +28,53 @@ __ACTION__
 資金の移動：一定の確率で起こる「連続負け」に対する措置として、資金が一定以上溜まったら移動(確率は後で計算する)
 
 __PLAN__
-None
+
+* 購入口数×単価×勝率=購入口数×1000
+~~* <負ける=資金が底をつく>見込みのほぼ考えられないだけのasset/bet比を求めること。比率を超えたら万一のための資金の移動~~
+~~* n回連続して負ける確率=2**(-n)×100%<<<連続敗率と称する~~
+~~	* 連続敗率が十分低いと考えられる0.01%とする~~
+勝率:2-random
+
+
 '''
-asset, bet, i, profit=100,1,0,0
+def winratio():
+	# 2-random.random()
+	return pay
+
+# def sufficient(bet,rate):
+# 	'''
+# 	十分低いと考えられる連続して巻ける確率rate%
+# 	初期試算を決める
+# 	'''
+# 	import numpy as np
+# 	'''rate=2**(-n)'''
+# 	n=-np.log2(rate)
+# 	suf=bet*(2**n)
+# 	return suf
+
+# print(sufficient(1,0.5))
+
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import numpy as np
+def soubakan(low, high, mu, si, length):
+	'''正規分布に従う乱数を返す
+	low, high: 正規分布の最小値、最大値
+	mu, si: 正規分布の中央値、標準偏差
+	length: いくつの要素のリストを返すか'''
+	x=stats.truncnorm.rvs((low-mu)/si, (high-mu)/si,loc=mu, scale=si,size=length)
+	return x
+
+
+low,high=1.01,np.inf
+mu,si=1.4,0.3
+x=soubakan(low, high, mu, si,10000)
+print(min(x))
+'''
+## __MAIN__________________________
+bet, assetDefault, i, profit,assetSafe=1,100,0,0,0
+# bet, asset, i, profit=1,10,0,0
+asset=assetDefault
 while 1:
 	asset-=bet
 	import random
@@ -37,7 +85,9 @@ while 1:
 	bet=min(bet,maxbet.maxbet(asset))    #掛け金は資金に対して最大値が決まっている
 	if not bet:print('bet becomes ZERO!!');break    #最大掛け金評価により、掛け金0になったら終了
 	if not asset>bet:print('I have no money!!');break    #掛け金が資金を上回ったら終了
-	if asset>100:asset-=10;profit+=10    #資金が一定以上になったら資金の一部をprofitに移動
+	profit=asset-assetDefault
+	if profit>0:asset-=profit;assetSafe+=profit    #資金が一定以上になったら資金の一部をassetSafeに移動
 	i+=1
-	print(i,'asset',asset,'bet',bet,'profit',profit)
-print('End of seqence...')
+	print(i,'asset',asset,'bet',bet,'assetSafe',assetSafe)
+print('End of sequence...')
+'''
