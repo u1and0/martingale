@@ -70,9 +70,9 @@ class Option:
 		print('After game asset',self.asset)
 		return self
 
-	def price(self,ratio):
-		price= round(1000/ratio,-1)    #単価が決まる
-		return (self.price)
+	# def price(self,ratio):
+	# 	price= round(1000/ratio,-1)    #単価が決まる
+	# 	return (self.price)
 
 '''
 TEST
