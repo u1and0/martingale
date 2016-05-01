@@ -42,17 +42,27 @@ def unit(bet, price):
 		bet=unit*price
 		profit=profit(bet,unit)
 	return unit
+
+
+def yyy(unit, price):
+	profit=unit*(1000-price)
+	return profit
+
+def xxx(ratio,lastbet=2000):
+	price=round(1000/ratio,-1)
+	unit=1
+	profit=0
+	while profit<lastbet*2:
+		unit+=1
+		profit=unit*(1000-price)
+	return unit
+
+
 '''
 TEST
 '''
-
-
 from game2 import *
 ratio=float(soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3, length=1))
-print(ratio)
-price=round(1000/ratio,-1)
-print(price)
-unit=unit(bet=1000, price)
-print(unit)
+print(list(xxx(ratio)))
 
 
