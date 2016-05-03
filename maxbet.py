@@ -31,42 +31,42 @@ none
 def maxbet(asset,mode='l'):
 	'''単位:[万円]'''
 	if mode in ['range' ,'r']:
-		if asset<1:
-			bet=0
-		elif 1<=asset<10:
-			bet=10
-		elif 10<=asset<50:
-			bet=25
-		elif 50<=asset<100:
-			bet=50
-		elif 100<=asset<300:
-			bet=100
-		elif 300<=asset<600:
-			bet=300
+		if asset<10000:
+			ticket=0
+		elif 10000<=asset<100000:
+			ticket=10
+		elif 100000<=asset<500000:
+			ticket=25
+		elif 500000<=asset<1000000:
+			ticket=50
+		elif 1000000<=asset<3000000:
+			ticket=100
+		elif 3000000<=asset<6000000:
+			ticket=300
 		else :
-			bet=500
+			ticket=500
 	else:# ('l' or 'ladder') == mode:
-		if asset<1:
-			bet=0
-		elif 1<=asset<10:
-			bet=10
-		elif 10<=asset<50:
-			bet=25
-		elif 50<=asset<100:
-			bet=50
-		elif 100<=asset<300:
-			bet=100
-		elif 300<=asset<600:
-			bet=300
+		if asset<10000:
+			ticket=0
+		elif 10000<=asset<100000:
+			ticket=10
+		elif 100000<=asset<500000:
+			ticket=25
+		elif 500000<=asset<1000000:
+			ticket=50
+		elif 1000000<=asset<3000000:
+			ticket=100
+		elif 3000000<=asset<6000000:
+			ticket=300
 		else :
-			bet=500
-	return bet*0.1    #上の数字は口数。一口1000円単位なので0.1倍
+			ticket=500
+	return ticket
 
 
 
 
 # '''TEST'''
 # for i in ['l','r','ladder','range','m','']:
-# 	for x in range(-100,700,5):
-# 		print(maxbet(x))
+# 	for x in range(-100000,7000000,50000):
+# 		print('mode: %s, asset:%d, max ticket: %d'% (i,x,maxbet(x)))
 # 		# print('mode',i,'\tasset',x,'\tmaxbet',maxbet(x,i))

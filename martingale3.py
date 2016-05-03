@@ -5,6 +5,7 @@ __UPDATE1.0__
 First commit
 
 __USAGE__
+まだ正確な動きをしないよ
 Just build
 
 __INTRODUCTION__
@@ -19,7 +20,7 @@ __ACTION__
 ゲームを行い結果をブール値で返す
 ゲームの支払額：購入口数×1000=購入口数×単価×勝率で表せる
 勝率＝
-~~購入口数は資金に依存するunit(asset)~~
+~~購入口数は資金に依存するticket(asset)~~
 	資金いっぱいあるのに購入口数少ないとき==>資金の移動
 資産について：勝ったら掛け金の2倍を足し、負けたら0を足す(=何もしない)
 掛け金について：勝ったら掛け金を1に戻し、負けたら掛け金を2倍にする**   ざわざわ･･･倍プッシュだ･･･！**
@@ -52,31 +53,31 @@ __PLAN__
 # print(sufficient(1,0.5))
 
 ## __MAIN__________________________
-bet, assetDefault, i, profit,assetSafe=1,100,0,0,0
+bet, assetDefault, i, profit,assetSafe=1,1000000,0,0,0
 # bet, asset, i, profit=1,10,0,0
 asset=assetDefault
+ticket=1
 while 1:
-	asset-=bet
 	import random
 	import numpy as numpy
 	from game2 import *
 	ratio=float(soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3, length=1))    #相場観を見て勝ちそうな倍率を人間が決める
-	
-	unit=1
-	bet=unit*price
-	payout=unit*1000
-	profit=
-	result=game(ratio)    #ゲームの結果(bool値)
-	asset+=2*bet if result else 0    #勝ったら資金に掛け金の2倍を足す
-	bet*=1/bet if result else 2    #勝ったら掛け金1に戻す。負けたら掛け金2倍
+	price=round(1000/ratio,-1)
+	bet=ticket*price
+	asset-=bet
+	payout=ticket*1000
+	profit=payout-bet
+	result='Win' if (random()>=1-1/ratio) else 'Lose'    #ゲームの結果
+	asset+=profit if result=='Win' else 0    #勝ったら資金に掛け金の2倍を足す
+	ticket*=1/ticket if result=='Win' else 2    #勝ったら掛け金1に戻す。負けたら掛け金2倍
 	import maxbet
-	bet=min(bet,maxbet.maxbet(asset))    #掛け金は資金に対して最大値が決まっている
+	ticket=min(ticket,maxbet.maxbet(asset))    #掛け金は資金に対して最大値が決まっている
 	if not bet:print('bet becomes ZERO!!');break    #最大掛け金評価により、掛け金0になったら終了
 	if not asset>bet:print('I have no money!!');break    #掛け金が資金を上回ったら終了
-	profit=asset-assetDefault
-	if profit>0:asset-=profit;assetSafe+=profit    #資金が一定以上になったら資金の一部をassetSafeに移動
+	safe=asset-assetDefault
+	if safe>0:asset-=safe;assetSafe+=safe    #資金が一定以上になったら資金の一部をassetSafeに移動
 	i+=1
-	print(i,'asset',asset,'bet',bet,'assetSafe',assetSafe)
+	print('%d, %s, asset: %d, bet: %d, assetSafe: %d'% (i,result,asset,bet,assetSafe))
 print('End of sequence...')
 
 

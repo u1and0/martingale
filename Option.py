@@ -1,7 +1,11 @@
 from game2 import *
 class Option:
 	'''
-	## Option ver1.1
+	## Option ver1.2
+
+	__UPDATE1.2__
+	資産の推移をリストにappend
+	printメッセージ修正
 
 	__UPDATE1.1__
 	引数に初期資産
@@ -24,19 +28,23 @@ class Option:
 
 
 	__PLAN__
-	None
+	* 安全資産の移動
+	* 資産の推移をplot
+	* 初期資産を変化させる
+	* 最大掛け金評価モジュール maxbet
+
 	'''
-	def __init__(self,asset):
+	def __init__(self,defaultAsset):
 		self.ratio=float(soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3, length=1))
 		self.price = round(1000/self.ratio,-1)    #単価が決まる
-		self.unit = 1
-		self.bet=self.unit*self.price
+		self.ticket = 1
+		self.bet=self.ticket*self.price
 		self.last=self.bet
-		self.profit = self.unit*(1000-self.price)
-		self.asset=asset
+		self.profit = self.ticket*(1000-self.price)
+		self.asset=defaultAsset
 		print('--My asset is %d--'% self.asset)
 		print('--Game Start--')
-		print('ratio %f\nprice %d x unit %d=bet %d\npayout %d,profit %d\nasset will be %d=>%d' %( self.ratio, self.price,self.unit,self.bet,self.unit*1000,self.profit,self.asset,self.profit+self.asset))
+		print('ratio %f\nprice %d x ticket %d=bet %d\npayout %d,profit %d\nasset will be %d=>%d' %( self.ratio, self.price,self.ticket,self.bet,self.ticket*1000,self.profit,self.asset,self.profit+self.asset))
 		print('_'*20)
 
 
@@ -51,8 +59,8 @@ class Option:
 		self.ratio=float(soubakan(low=1.01, high=np.inf, mu=1.4, si=0.3, length=1))
 		self.price = round(1000/self.ratio,-1)    #単価が決まる
 		self.last=self.bet
-		print('Before bet asset',self.asset)
-		print('bet -',self.last)
+		print('Before bet asset: %d'% self.asset)
+		print('bet -%d'% self.last)
 		if self.asset<self.bet:
 			print('--I have no more money!--')
 			raise StopIteration()
@@ -61,31 +69,28 @@ class Option:
 		import random
 		if random.random()>=1-1/self.ratio:
 			print('Win!')
-			print('asset +%d'% (self.unit*1000))
-			self.asset+=self.unit*1000
-			self.unit=1
-			self.bet=self.unit*self.price
-			self.profit = self.unit*(1000-self.price)
+			print('asset +%d'% (self.ticket*1000))
+			self.asset+=self.ticket*1000
+			self.ticket=1
+			self.bet=self.ticket*self.price
+			self.profit = self.ticket*(1000-self.price)
 		else:
 			print('Lose!')
 			while self.profit<self.last*2:
-				self.unit+=1
-				self.bet=self.unit*self.price
-				self.profit = self.unit*(1000-self.price)
+				self.ticket+=1
+				self.bet=self.ticket*self.price
+				self.profit = self.ticket*(1000-self.price)
 		print('After game asset %d'% self.asset)
 		return self
 
-	# def price(self,ratio):
-	# 	price= round(1000/ratio,-1)    #単価が決まる
-	# 	return (self.price)
 
 '''
 TEST
 '''
 x=Option(10000)
+asset=[]
 for i in x:
-	print('--Next Game--')
-
-	print('ratio %f\nprice %d x unit %d=bet %d\npayout %d,profit %d\nasset will %d=>%d' %( i.ratio, i.price,i.unit,i.bet,i.unit*1000,i.profit,i.asset,i.profit+i.asset))
-
+	print('--%d Game--\nratio %f\nprice %d x ticket %d=bet %d\npayout %d,profit %d\nasset will %d=>%d' %(i._i, i.ratio, i.price,i.ticket,i.bet,i.ticket*1000,i.profit,i.asset,i.profit+i.asset))
 	print('_'*20)
+	asset.append(i.asset)
+print(asset)
